@@ -49,5 +49,56 @@ namespace NationalParksApi.Controllers
 
       return park;
     }
+
+    // PUT: api/Parks/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdatePark(int id, Park park)
+    {
+      if (id != park.Id)
+      {
+        return BadRequest("The ID in the URL does not match the ID of the park to update.");
+      }
+
+      _context.Entry(park).State = EntityState.Modified;
+
+      try
+      {
+        await _context.SaveChangesAsync();
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!ParkExists(id))
+        {
+          return BadRequest("Oops! Looks like that park doesn't exist.");
+        }
+        else
+        {
+          throw;
+        }
+      }
+
+      return NoContent();
+    }
+
+    // DELETE: api/Parks/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePark(int id)
+    {
+      var park = await _context.Parks.FindAsync(id);
+      if (park == null)
+      {
+        return BadRequest("Oops! Looks like that park doesn't exist.");
+      }
+
+      _context.Parks.Remove(park);
+      await _context.SaveChangesAsync();
+
+      return NoContent();
+    }
+
+    private bool ParkExists(int id)
+    {
+      return _context.Parks.Any(e => e.Id == id);
+    }
   }
 }
