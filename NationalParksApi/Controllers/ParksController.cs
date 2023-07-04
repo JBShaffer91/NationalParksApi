@@ -21,9 +21,19 @@ namespace NationalParksApi.Controllers
 
     // GET: api/Parks
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Park>>> GetParks()
+    public async Task<ActionResult<IEnumerable<Park>>> GetParks([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-      return await _context.Parks.ToListAsync();
+      var parks = await _context.Parks
+    .Skip((pageNumber - 1) * pageSize)
+    .Take(pageSize)
+    .ToListAsync();
+
+      if (parks == null || !parks.Any())
+      {
+        return NotFound("No parks found.");
+      }
+
+      return parks;
     }
 
     // POST: api/Parks
