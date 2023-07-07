@@ -24,9 +24,9 @@ namespace NationalParksApi.Controllers
     public async Task<ActionResult<IEnumerable<Park>>> GetParks([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
       var parks = await _context.Parks
-    .Skip((pageNumber - 1) * pageSize)
-    .Take(pageSize)
-    .ToListAsync();
+      .Skip((pageNumber - 1) * pageSize)
+      .Take(pageSize)
+      .ToListAsync();
 
       if (parks == null || !parks.Any())
       {
